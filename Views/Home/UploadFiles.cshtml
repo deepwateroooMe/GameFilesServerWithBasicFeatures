@@ -1,0 +1,24 @@
+﻿@using System.IO
+
+@*
+For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+ViewData["Title"] = "UploadFiles";
+}
+
+<h2>目录内容</h2>
+<ul class="list-group">　　//razor语法  输出file目录的文件
+@{
+var items = Directory.GetFiles(Directory.GetCurrentDirectory() + "\\file");
+foreach (var item in items)
+{
+<li class="list-group-item">@item.ToString()</li>
+}
+}
+</ul>
+<hr />
+<h2>日志内容</h2>
+<p>
+@ViewBag.log
+</p>
