@@ -18,33 +18,37 @@ namespace testMVC.Controllers {
         public IActionResult Upload() {
             return View();
         }        
-// 登录
-        public ActionResult Login() {
-            string userName = Request.Form["username"];
-            string password = Request.Form["password"];
-            if (userName == "admin" && password == "123") {
-                // Authentication.Login(HttpContext, userName); // 这个类没有连好，因为参考的项目感觉并不能运行得很好到自己可以狠好的理解的程度
-            }
-            return Redirect("/Home/Index");
-        }
-// 登出
-        public ActionResult Logout() {
-            // Authentication.Logout(HttpContext);
-            return Redirect("/Home/Index");
-        }
+// // 登录
+//         public ActionResult Login() {
+//             string userName = Request.Form["username"];
+//             string password = Request.Form["password"];
+//             if (userName == "admin" && password == "123") {
+//                 // Authentication.Login(HttpContext, userName); // 这个类没有连好，因为参考的项目感觉并不能运行得很好到自己可以狠好的理解的程度
+//             }
+//             // return Redirect("/Home/Index");
+//         }
+// // 登出
+//         public ActionResult Logout() {
+//             // Authentication.Logout(HttpContext);
+//             // return Redirect("/Home/Index");
+//         }
         
-        // public IActionResult Login() {
-        //     return View();
-        // }        
-        // public IActionResult Logout() {
-        //     return View();
-        // }        
+        public IActionResult Login() {
+            return View();
+        }        
+        public IActionResult Logout() {
+            return View();
+        }        
 
 // 这里实现了可以向服务器上传多个文件，但无法上传文件夹，会过滤到内㠌文件夹        
         [HttpPost]　　　　// 上传文件是 post 方式，这里加不加都可以
         public async Task<IActionResult> UploadFiles(List<IFormFile> files) {
             long size = files.Sum(f => f.Length);       // 统计所有文件的大小
-            var filepath = Directory.GetCurrentDirectory() + "\\android";  // 存储文件的路径
+
+            // 服务器将要存储文件的路径
+            // var Folder = AppDomain.CurrentDomain.BaseDirectory + "AppFileUploads/";
+            var filepath = AppDomain.CurrentDomain.BaseDirectory + "android/";
+            // var filepath = Directory.GetCurrentDirectory() + "\\android";  // 存储文件的路径: 这个路径极其误导人,其它应该是设置为服务器的存储文件路径
             ViewBag.log = "日志内容为：";     // 记录日志内容
             foreach (var item in files) { // 上传选定的文件列表 {
                 if (item.Length > 0) { // 文件大小 0 才上传 {
@@ -88,9 +92,9 @@ namespace testMVC.Controllers {
             ViewBag.ErrorInfo = ModelState.Values.First().Errors[0].ErrorMessage;
             return View(model);
         }
-        // public IActionResult Index() {
-        //     return View();
-        // }
+        public IActionResult Index() {
+            return View();
+        }
         public IActionResult Privacy() {
             return View();
         }
