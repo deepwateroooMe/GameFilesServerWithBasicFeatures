@@ -17,7 +17,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthorization();
+app.UseAuthorization(); // 进行身份验证
 
 app.MapControllerRoute(
 	name: "default",
