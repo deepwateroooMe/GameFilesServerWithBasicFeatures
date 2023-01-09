@@ -7,21 +7,44 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using testMVC.Models;
+using MyServer.Models;
+using MyServer.Controllers.utils;
 
 namespace testMVC.Controllers {
 
     public class HomeController : Controller {
 
-// 向服务器:上传文件        
+// 上传文件        
         public IActionResult Upload() {
             return View();
         }        
+// 登录
+        public ActionResult Login() {
+            string userName = Request.Form["username"];
+            string password = Request.Form["password"];
+            if (userName == "admin" && password == "123") {
+                // Authentication.Login(HttpContext, userName); // 这个类没有连好，因为参考的项目感觉并不能运行得很好到自己可以狠好的理解的程度
+            }
+            return Redirect("/Home/Index");
+        }
+// 登出
+        public ActionResult Logout() {
+            // Authentication.Logout(HttpContext);
+            return Redirect("/Home/Index");
+        }
+        
+        // public IActionResult Login() {
+        //     return View();
+        // }        
+        // public IActionResult Logout() {
+        //     return View();
+        // }        
 
 // 这里实现了可以向服务器上传多个文件，但无法上传文件夹，会过滤到内㠌文件夹        
         [HttpPost]　　　　// 上传文件是 post 方式，这里加不加都可以
         public async Task<IActionResult> UploadFiles(List<IFormFile> files) {
             long size = files.Sum(f => f.Length);       // 统计所有文件的大小
-            var filepath = Directory.GetCurrentDirectory() + "\\file";  // 存储文件的路径
+            var filepath = Directory.GetCurrentDirectory() + "\\android";  // 存储文件的路径
             ViewBag.log = "日志内容为：";     // 记录日志内容
             foreach (var item in files) { // 上传选定的文件列表 {
                 if (item.Length > 0) { // 文件大小 0 才上传 {
@@ -44,9 +67,30 @@ namespace testMVC.Controllers {
             return View();
         }        
 
-        public IActionResult Index() {
-            return View();
+        [HttpPost]
+        public IActionResult Index(LoginModel model) {
+            if (ModelState.IsValid)
+            {
+                //检查用户信息
+                // var user = _userAppService.CheckUser(model.UserName, model.Password); // <<<<<<<<<<<<<<<<<<<< 这里需要一个功能
+                var user = new User("me");
+                if (user != null)
+                {
+                    //记录Session
+                    HttpContext.Session.Set("CurrentUser", ByteConvertHelper.Object2Bytes(user));
+                    //跳转到系统首页
+                    return RedirectToAction("Index", "Home");
+                }
+                // ModelState.AddModelError("", "用户名或密码错误。");
+                ViewBag.ErrorInfo = "用户名或密码错误。";
+                return View();
+            }
+            ViewBag.ErrorInfo = ModelState.Values.First().Errors[0].ErrorMessage;
+            return View(model);
         }
+        // public IActionResult Index() {
+        //     return View();
+        // }
         public IActionResult Privacy() {
             return View();
         }
