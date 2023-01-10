@@ -2,7 +2,7 @@
 
 namespace MyServer.Models
 {
-    class AnonymousIdentity : IIdentity
+    public class AnonymousIdentity : IIdentity
     {
         public string Name => "Anonymouse";
 

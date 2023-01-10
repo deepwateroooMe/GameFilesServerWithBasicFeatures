@@ -1,5 +1,7 @@
-﻿using MyServer.Models;
-using System.Data.Entity;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using MyServer.Models;
+using System.IO;
 
 namespace MyServer {
 
@@ -20,7 +22,7 @@ namespace MyServer {
                 .Build();
 
             var connectionString = configuration.GetConnectionString("AppDb");
-            optionsBuilder.UseSqlServer(connectionString);
+            optionsBuilder.UseSqlServer(connectionString); // 这里有个找不到的方法或是动态生成的文件
         }
     }
 }

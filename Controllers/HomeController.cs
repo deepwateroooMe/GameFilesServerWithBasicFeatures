@@ -6,11 +6,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using testMVC.Models;
-
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
+using Microsoft.Extensions.Logging;
+using MyServer.Models;
 
 namespace MyServer.Controllers {
 
@@ -106,7 +106,7 @@ namespace MyServer.Controllers {
             return View();
         }
 
-        public IActionResult Privacy() {
+        public IActionResult About() {
             return View();
         }
 
@@ -116,9 +116,9 @@ namespace MyServer.Controllers {
             _logger = logger;
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error() {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+        //[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        //public IActionResult Error() {
+        //    return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        //}
     }
 }

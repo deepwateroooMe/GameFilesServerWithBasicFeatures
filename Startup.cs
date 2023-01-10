@@ -1,13 +1,46 @@
-﻿using Fluent.Infrastructure.FluentModel;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using MyServer;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace MyServer {
+
     public class Startup {
+        // public Startup() { }
+        
         public IConfiguration Configuration { get; }
+
         public Startup(IConfiguration configuration) {
             Configuration = configuration;
         }
+
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
+            if (env.IsDevelopment()) {
+                app.UseDeveloperExceptionPage(); // ErrorViewModel 用的地方 ?
+            }
+            app.UseStaticFiles(); // 
+            app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
+            app.UseEndpoints(endpoints => {
+                endpoints.MapControllers(); // 下面再添加一点儿:
+
+                endpoints.MapGet("/", async context => {
+                        await context.Response.WriteAsync("Hello World!");
+                    });
+                endpoints.MapGet("/Home/Login", async context => {
+                        await context.Response.WriteAsync("Login");
+                    });
+                endpoints.MapGet("/Manage", async context => { // 这里可能会报错
+                        await context.Response.WriteAsync("Manage");
+                    }).RequireAuthorization();
+                endpoints.MapRazorPages();
+            });
+        }
+
         public void ConfigureServices(IServiceCollection services) {
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, o => {
@@ -15,8 +48,13 @@ namespace MyServer {
                     // o.LoginPath = new PathString("/Account/Login");
                     o.LoginPath = new PathString("/Home/Login");
                     // 禁止访问路径：当用户试图访问资源时，但未通过该资源的任何授权策略，请求将被重定向到这个相对路径。
-                    o.AccessDeniedPath = new PathString("/Home/Privacy");
+                    o.AccessDeniedPath = new PathString("/Home/About");
                 });
+
+// 再添加一些别的:
+            services.AddRazorPages();
+            
+            
             //services.AddDbContext<MyDbContext>(options => // .NET Core 5.0
             //                                   options.UseMySql(ConfigurationString("MySQL"),
             //                                                    MyServerVersion.LatestSupportedServerVersion));
@@ -62,16 +100,6 @@ namespace MyServer {
             //     // 不知道下面的有什么相关
             //     services.AddTransient<IEmailSender, EmailSender>();
             //     services.AddMvc();
-        }
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
-            if (env.IsDevelopment()) {
-                app.UseDeveloperExceptionPage();
-            }
-            app.UseRouting();
-            app.UseAuthorization();
-            app.UseEndpoints(endpoints => {
-                endpoints.MapControllers();
-            });
         }
     }
 }

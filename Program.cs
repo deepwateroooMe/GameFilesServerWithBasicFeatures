@@ -1,6 +1,23 @@
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Threading;
+using System.Threading.Tasks;
+
 namespace MyServer {
     public class Program {
-		static void	Main(string[] args) {
+        static void	Main(string[] args) {
         
             var builder = WebApplication.CreateBuilder(args);
 
@@ -31,14 +48,14 @@ namespace MyServer {
 // builder.Services.AddDbContext<zjkcsContext>(options =>
 //                                             options.UseSqlServer(Configuration.GetConnectionString("zjkcsDB")));
 
-            var connectionString = builder.Configuration.GetConnectionString("ConnectionStrings");
-            builder.Services.AddDbContext<MyDbContext>(x => x.UseSqlServer(connectionString));
+            //var connectionString = builder.Configuration.GetConnectionString("ConnectionStrings");
+            //builder.Services.AddDbContext<MyDbContext>(x => x.UseSqlServer(connectionString));
 
             var app = builder.Build(); 
 
 // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment()) {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Home/Error"); // 这里会用到的
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
