@@ -10,13 +10,9 @@ using testMVC.Models;
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
-using MyServer.Models;
-using MyServer.Controllers.utils;
-
-namespace testMVC.Controllers {
+namespace MyServer.Controllers {
 
     public class HomeController : Controller {
         private const string TAG = "HomeController";
