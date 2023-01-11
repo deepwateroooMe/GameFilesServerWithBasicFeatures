@@ -1,6 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using MyServer.Models;
+using System;
 using System.IO;
 
 namespace MyServer {
@@ -20,9 +21,12 @@ namespace MyServer {
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json")
                 .Build();
-
-            var connectionString = configuration.GetConnectionString("AppDb");
-            optionsBuilder.UseSqlServer(connectionString); // 这里有个找不到的方法或是动态生成的文件
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
+            // optionsBuilder.UseMySql(connectionString, b => b.MigrationsAssembly("AspNetCoreMultipleProject")); // 这里还是有点儿问题的
+            string tmp = "";
+            optionsBuilder.UseMySql("Server=127.0.0.1;Database=game;Trusted_Connection=True;MultipleActiveResultSets=true",
+                                    new MySqlServerVersion(new Version(8, 0, 11)));
+                                    // b=> b.MigrationsAssembly("AspNetCoreMultipleProject")); // 这里还是有点儿问题的: 会出现编译错误
         }
     }
 }
