@@ -342,3 +342,27 @@ builder.Services.AddDbContext<MvcMovieContext>(options =>
 - 如果这是一个动态网络文件服务器，应该也是需要背后有有一个数据库来作支持的。虽然自已目前只有不到或是10个左右的文件。这块儿也需要查一下
 - 
 - 
+* root@localhost连不上mysql权限问题的设置步骤
+- window 10 终端root@localhost连不上mysql: 解决主要步骤:
+- 打开MySQL目录下的my.ini文件，删除最后一行的“skip-grant-tables”，保存并关闭文件。这里有个另包的小步骤是需要修改这个文件的安全权限
+- 终端必要的权限设置：
+#+BEGIN_SRC shell
+set global read_only=0;
+flush privileges;
+
+CREATE USER 'root'@'%' IDENTIFIED BY 'password';
+drop user 'root'@'localhost';
+flush privileges;
+
+CREATE USER 'root'@'%' IDENTIFIED BY 'hhj1';
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%';
+
+CREATE USER 'root'@'localhost' IDENTIFIED BY 'hhj1';
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost';
+
+set global read_only=1;
+flush privileges;
+#+END_SRC
+- 截图如下：
+   
+[[./pic/readme_20230111_162732.png]]
