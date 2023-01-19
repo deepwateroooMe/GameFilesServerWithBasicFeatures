@@ -286,21 +286,6 @@ public static void NewMethod5() {
 }
 #+END_SRC
 
-* 功能模块实现更新日志：　文件服务器＋登录＋数据库
-- 最基本的第一版本。把服务器改造成可以存储文件的网络文件（热更新资源包）服务器(至少是希望能够同步1连20台客户端？大家基本可以做到1：1000  1：10000？)。
-  - 一个（特殊客户端）大后端(专门负责向服务器上传热更新过的最新资源包文件夹)：用来向服务器发送更新过的热更新资源文件（可以渐近从上传一个文件，到多个文件，到上传整个文件夹）。MVC的，里面应该是可以实现登录的，需要把这块儿补充完整
-  - 参考：https://www.cnblogs.com/whuanle/p/10008976.html
-  - 现在可上传一个文件，多个文件，但不能上传文件夹，不能内㠌文件夹。还想找一下解决方案（对应的，服务器总台功能模块需要处理资源文件MD5码表相关的模块和逻辑）
-  - 压缩与解压等相关逻辑可以探索 登录　 https://www.cnblogs.com/fonour/p/5943401.html
-  - 同样，是可以连接身后数据库的。把前几天晚上没连上的数据库再连一次
-#+BEGIN_SRC csharp
-builder.Services.AddDbContext<MvcMovieContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("MvcMovieContext")));
-#+END_SRC
-- json里面的配置：那天没有配置对https://learn.microsoft.com/zh-cn/aspnet/core/tutorials/first-mvc-app/working-with-sql?view=aspnetcore-7.0&tabs=visual-studio
-  - 
-- 
-
 * HttpListener 文件服务器
 - v0.001版源参考:https://blog.csdn.net/yang_aq/article/details/116032573?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_baidulandingword~default-0-116032573-blog-119875873.pc_relevant_3mothn_strategy_recovery&spm=1001.2101.3001.4242.1&utm_relevant_index=2
 - 客户端向服务器请求资源包文件更新，视用户玩家必须登录与否来确定。若所有游戏强制开启登录模式才能玩，那么服务器一定需要身份验证，只有游戏的玩家才可以自动检测请求拿到最新的资源包文件。身份验证登录Session + Cookie模式。若玩家不强制登录，那么服务器端也就不需要身份验证直接下载（可能会经受恶意网络攻击，因为别人可以生成死循代码把脆弱的服务器给搞死了。。。。。）
@@ -366,3 +351,20 @@ flush privileges;
 - 截图如下：
    
 [[./pic/readme_20230111_162732.png]]
+
+* 功能模块实现更新日志：　文件服务器＋登录＋数据库
+- 最基本的第一版本。把服务器改造成可以存储文件的网络文件（热更新资源包）服务器(至少是希望能够同步1连20台客户端？大家基本可以做到1：1000  1：10000？)。
+  - 一个（特殊客户端）大后端(专门负责向服务器上传热更新过的最新资源包文件夹)：用来向服务器发送更新过的热更新资源文件（可以渐近从上传一个文件，到多个文件，到上传整个文件夹）。MVC的，里面应该是可以实现登录的，需要把这块儿补充完整
+  - 参考：https://www.cnblogs.com/whuanle/p/10008976.html
+  - 现在可上传一个文件，多个文件，但不能上传文件夹，不能内㠌文件夹。还想找一下解决方案（对应的，服务器总台功能模块需要处理资源文件MD5码表相关的模块和逻辑）
+  - 压缩与解压等相关逻辑可以探索 登录　 https://www.cnblogs.com/fonour/p/5943401.html
+  - 同样，是可以连接身后数据库的。把前几天晚上没连上的数据库再连一次
+#+BEGIN_SRC csharp
+builder.Services.AddDbContext<MvcMovieContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("MvcMovieContext")));
+#+END_SRC
+- json里面的配置：那天没有配置对https://learn.microsoft.com/zh-cn/aspnet/core/tutorials/first-mvc-app/working-with-sql?view=aspnetcore-7.0&tabs=visual-studio
+- 数据库功能模块能够使用visual studio 2019 版本连接MySQL数据库创建修改表格等
+- 登录与登出系统,仍在试图去理解为什么视图加载时无法动态检测我还没有登录(没有显示登录按钮)[这个小bug已经解决，将关于用户帐户登录与否的部分视图添加到视图中去].
+- Login.cshtml.g.cs没有正常生成，今天会试图去理解原理，并解决这个问题
+

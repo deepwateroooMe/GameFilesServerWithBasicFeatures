@@ -37,13 +37,13 @@ namespace MyServer.Controllers {
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> Login([FromForm] LoginViewModel input) {
-            ViewBag.ReturnUrl = input.ReturnUrl;
+            ViewBag.ReturnUrl = input.ReturnUrl; // 这里设置的值: 但是总是报错说,这里的没有设置或是弄错了?
             // 用户名密码相同视为登录成功
             if (input.UserName != input.Password) {
                 ModelState.AddModelError("UserNameOrPasswordError", "无效的用户名或密码");
             }
-            if (!ModelState.IsValid) {
-                return View();
+            if (!ModelState.IsValid) { // 状态不对
+                return View(); // <<<<<<<<<< 总会走到这里返回
             }
             // 参数 authenticationType 必须非空或空白字符串，这样 identity.IsAuthenticated 才会是 true
             var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme, JwtClaimTypes.Name, JwtClaimTypes.Role);
@@ -58,6 +58,7 @@ namespace MyServer.Controllers {
             // 内部会自动对 cookie 进行加密
             var properties = new AuthenticationProperties {
                 // 票据所在的Cookie是否持久化。默认非持久化，即该Cookie有效期是会话级别
+
                 // 若为 true，则会将 ExpiresUtc 的值设置到 Cookie 的 Expires 属性上
                 IsPersistent = input.RememberMe,
                 // Cookie 中 authentication ticket 的过期时间
@@ -75,11 +76,11 @@ namespace MyServer.Controllers {
             // var cookieValue = options.TicketDataFormat.Protect(ticket, GetTlsTokenBinding(HttpContext));
             // options.CookieManager.AppendResponseCookie(HttpContext, options.Cookie.Name, cookieValue, new CookieOptions());
 #endregion
+
 #region 添加自定义Cookie
-            Response.Cookies.Append("author", "xiaoxiaotank", new CookieOptions
-                                    {
-                                        MaxAge = TimeSpan.FromSeconds(30)
-                                    });
+            Response.Cookies.Append("author", "xiaoxiaotank", new CookieOptions {
+                    MaxAge = TimeSpan.FromSeconds(30)
+                });
 #endregion
             if (Url.IsLocalUrl(input.ReturnUrl)) {
                 return Redirect(input.ReturnUrl);
