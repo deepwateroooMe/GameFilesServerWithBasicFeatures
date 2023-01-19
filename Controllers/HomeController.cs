@@ -18,18 +18,20 @@ namespace MyServer.Controllers {
 	public class HomeController : Controller {
         private const string TAG = "HomeController";
 
-        public IActionResult Index() {
-            return View();
-        }
-
-        public IActionResult About() {
-            return View();
-        }
-
         private readonly ILogger<HomeController> _logger;
-
         public HomeController(ILogger<HomeController> logger) {
             _logger = logger;
+        }
+
+        [HttpGet]
+       public IActionResult Index() {
+            return View();
+        }
+
+        [HttpGet]
+        [Authorize] // 这里就是说：没有登录，不许看！！！
+        public IActionResult About() {
+            return View();
         }
 
 // 视图中会调用这个方法
@@ -49,7 +51,7 @@ namespace MyServer.Controllers {
             return View();
         }        
 
-// 这里实现了可以向服务器上传多个文件，但无法上传文件夹，会过滤到内㠌文件夹        
+// 这里实现了可以向服务器上传多个文件，但无法上传文件夹，会过滤掉内㠌文件夹：因为是根据单个文件来的
         [HttpPost, DisableRequestSizeLimit]　　　　// 上传文件是 post 方式，这里加不加都可以
         public async Task<IActionResult> UploadFiles(List<IFormFile> files) {
             long size = files.Sum(f => f.Length);       // 统计所有文件的大小
@@ -101,33 +103,5 @@ namespace MyServer.Controllers {
             return Json("Upload Successful."); // 这里改成是能够自动跳转回某缺省页面
             // return View();
         }        
-
-// // 登录页面
-//         public IActionResult Login() {
-//             return View();
-//         }
-
-// // post 登录请求
-//         [HttpPost]
-//         public async Task<IActionResult> Login(string userName, string password) {
-//             if (userName.Equals("admin") && password.Equals("123")) {
-//                 var claims = new List<Claim>(){
-//                     new Claim(ClaimTypes.Name, userName), new Claim("password", password)
-//                 };
-//                 var userPrincipal = new ClaimsPrincipal(new ClaimsIdentity(claims, "Customer"));
-//                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, userPrincipal, new AuthenticationProperties {
-//                         ExpiresUtc = DateTime.UtcNow.AddMinutes(20),
-//                         IsPersistent = false,
-//                         AllowRefresh = false
-//                     });
-//                 return Redirect("/Home/Index");
-//             }
-//             return Json(new { result = false, msg = "用户名密码错误!" });
-//         }
-// 退出登录
-        public async Task<IActionResult> Logout() {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return Redirect("/Login");
-        }
     }
 }

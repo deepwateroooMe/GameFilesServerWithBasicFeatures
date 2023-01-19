@@ -112,5 +112,32 @@ namespace MyServer.Controllers {
         public IActionResult AccessDenied([FromQuery] string returnUrl = null) {
             return View();
         }
+
+// // 登录页面
+//         public IActionResult Login() {
+//             return View();
+//         }
+// // post 登录请求
+//         [HttpPost]
+//         public async Task<IActionResult> Login(string userName, string password) {
+//             if (userName.Equals("admin") && password.Equals("123")) {
+//                 var claims = new List<Claim>(){
+//                     new Claim(ClaimTypes.Name, userName), new Claim("password", password)
+//                 };
+//                 var userPrincipal = new ClaimsPrincipal(new ClaimsIdentity(claims, "Customer"));
+//                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, userPrincipal, new AuthenticationProperties {
+//                         ExpiresUtc = DateTime.UtcNow.AddMinutes(20),
+//                         IsPersistent = false,
+//                         AllowRefresh = false
+//                     });
+//                 return Redirect("/Home/Index");
+//             }
+//             return Json(new { result = false, msg = "用户名密码错误!" });
+//         }
+// // 退出登录 : 暂时，等解决一个bug
+//         public async Task<IActionResult> Logout() {
+//             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+//             return Redirect("/Login");
+//         }
     }
 }
