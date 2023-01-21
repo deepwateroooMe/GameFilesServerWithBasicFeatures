@@ -366,5 +366,7 @@ builder.Services.AddDbContext<MvcMovieContext>(options =>
 - json里面的配置：那天没有配置对https://learn.microsoft.com/zh-cn/aspnet/core/tutorials/first-mvc-app/working-with-sql?view=aspnetcore-7.0&tabs=visual-studio
 - 数据库功能模块能够使用visual studio 2019 版本连接MySQL数据库创建修改表格等
 - 登录与登出系统,仍在试图去理解为什么视图加载时无法动态检测我还没有登录(没有显示登录按钮)[这个小bug已经解决，将关于用户帐户登录与否的部分视图添加到视图中去].
-- Login.cshtml.g.cs没有正常生成，今天会试图去理解原理，并解决这个问题
+- 这个部分还有一个小bug，晚点儿再来修复它(_LoginPartial.cshtml null ==> "/")。wired way of fixing it. 
+
+
 

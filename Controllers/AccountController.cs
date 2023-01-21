@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
 using MyServer.Models;
+using MyServer.Models.Account;
 using System;
 using System.Linq;
 using System.Security.Claims;
@@ -21,15 +22,14 @@ namespace MyServer.Controllers {
         private readonly IDistributedCache _cache;
 
         public AccountController(
-            IOptionsMonitor<CookieAuthenticationOptions> cookieAuthOptions,
-            IDistributedCache cache) {
+            IOptionsMonitor<CookieAuthenticationOptions> cookieAuthOptions, IDistributedCache cache) {
             _cookieAuthOptionsMonitor = cookieAuthOptions;
             _cache = cache;
         }
 
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult Login([FromQuery] string returnUrl = null) {
+        public IActionResult Login([FromQuery] string returnUrl = "/") { // wired way of fixing it
             ViewBag.ReturnUrl = returnUrl;
             return View();
         }
@@ -38,7 +38,7 @@ namespace MyServer.Controllers {
         [AllowAnonymous]
         public async Task<IActionResult> Login([FromForm] LoginViewModel input) {
             ViewBag.ReturnUrl = input.ReturnUrl; // 这里设置的值: 但是总是报错说,这里的没有设置或是弄错了?
-            // 用户名密码相同视为登录成功
+                                                 // 用户名密码相同视为登录成功
             if (input.UserName != input.Password) {
                 ModelState.AddModelError("UserNameOrPasswordError", "无效的用户名或密码");
             }
@@ -58,7 +58,6 @@ namespace MyServer.Controllers {
             // 内部会自动对 cookie 进行加密
             var properties = new AuthenticationProperties {
                 // 票据所在的Cookie是否持久化。默认非持久化，即该Cookie有效期是会话级别
-
                 // 若为 true，则会将 ExpiresUtc 的值设置到 Cookie 的 Expires 属性上
                 IsPersistent = input.RememberMe,
                 // Cookie 中 authentication ticket 的过期时间
@@ -76,7 +75,6 @@ namespace MyServer.Controllers {
             // var cookieValue = options.TicketDataFormat.Protect(ticket, GetTlsTokenBinding(HttpContext));
             // options.CookieManager.AppendResponseCookie(HttpContext, options.Cookie.Name, cookieValue, new CookieOptions());
 #endregion
-
 #region 添加自定义Cookie
             Response.Cookies.Append("author", "xiaoxiaotank", new CookieOptions {
                     MaxAge = TimeSpan.FromSeconds(30)
@@ -87,6 +85,7 @@ namespace MyServer.Controllers {
             }
             return Redirect("/");
         }
+        
         private static string GetTlsTokenBinding(HttpContext context) {
             var binding = context.Features.Get<ITlsTokenBindingFeature>()?.GetProvidedTokenBindingId();
             return binding == null ? null : Convert.ToBase64String(binding);
@@ -112,32 +111,31 @@ namespace MyServer.Controllers {
         public IActionResult AccessDenied([FromQuery] string returnUrl = null) {
             return View();
         }
-
-// // 登录页面
-//         public IActionResult Login() {
-//             return View();
-//         }
-// // post 登录请求
-//         [HttpPost]
-//         public async Task<IActionResult> Login(string userName, string password) {
-//             if (userName.Equals("admin") && password.Equals("123")) {
-//                 var claims = new List<Claim>(){
-//                     new Claim(ClaimTypes.Name, userName), new Claim("password", password)
-//                 };
-//                 var userPrincipal = new ClaimsPrincipal(new ClaimsIdentity(claims, "Customer"));
-//                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, userPrincipal, new AuthenticationProperties {
-//                         ExpiresUtc = DateTime.UtcNow.AddMinutes(20),
-//                         IsPersistent = false,
-//                         AllowRefresh = false
-//                     });
-//                 return Redirect("/Home/Index");
-//             }
-//             return Json(new { result = false, msg = "用户名密码错误!" });
-//         }
-// // 退出登录 : 暂时，等解决一个bug
-//         public async Task<IActionResult> Logout() {
-//             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-//             return Redirect("/Login");
-//         }
+        // // 登录页面
+        //         public IActionResult Login() {
+        //             return View();
+        //         }
+        // // post 登录请求
+        //         [HttpPost]
+        //         public async Task<IActionResult> Login(string userName, string password) {
+        //             if (userName.Equals("admin") && password.Equals("123")) {
+        //                 var claims = new List<Claim>(){
+        //                     new Claim(ClaimTypes.Name, userName), new Claim("password", password)
+        //                 };
+        //                 var userPrincipal = new ClaimsPrincipal(new ClaimsIdentity(claims, "Customer"));
+        //                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, userPrincipal, new AuthenticationProperties {
+        //                         ExpiresUtc = DateTime.UtcNow.AddMinutes(20),
+        //                         IsPersistent = false,
+        //                         AllowRefresh = false
+        //                     });
+        //                 return Redirect("/Home/Index");
+        //             }
+        //             return Json(new { result = false, msg = "用户名密码错误!" });
+        //         }
+        // // 退出登录 : 暂时，等解决一个bug
+        //         public async Task<IActionResult> Logout() {
+        //             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        //             return Redirect("/Login");
+        //         }
     }
 }
