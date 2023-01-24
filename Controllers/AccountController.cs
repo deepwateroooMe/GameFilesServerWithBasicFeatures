@@ -17,10 +17,12 @@ using System.Threading.Tasks;
 namespace MyServer.Controllers {
 
     public class AccountController : Controller {
-
         private readonly IOptionsMonitor<CookieAuthenticationOptions> _cookieAuthOptionsMonitor;
         private readonly IDistributedCache _cache;
 
+// 当与数据库连起来的时候，应该是需要有数据库的上下文的
+        private MyDbContext db = new MyDbContext();
+        
         public AccountController(
             IOptionsMonitor<CookieAuthenticationOptions> cookieAuthOptions, IDistributedCache cache) {
             _cookieAuthOptionsMonitor = cookieAuthOptions;

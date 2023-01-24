@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using MvcDemo.Models;
 using MyServer.Models;
 using System;
 using System.IO;
@@ -7,14 +8,17 @@ using System.IO;
 namespace MyServer {
 
     public class MyDbContext : DbContext {
-
-        public DbSet<Person> People { get; set; }
+        public DbSet<Account> Accounts { get; set; }
 
 		public MyDbContext(DbContextOptions<MyDbContext> options) : base(options) {
             this.Database.Migrate();
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
+		public MyDbContext()
+		{
+		}
+
+		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json")
